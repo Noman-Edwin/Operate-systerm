@@ -1,60 +1,147 @@
 #include<iostream>
-#include<string>
+#include<vector>
 #include<deque>
+#include<math.h>
+#include<map>
 #include<algorithm>
 using namespace std;
-int base_time;
-int begin_time=0;
-struct jcb                                                            //定义作业块
+//先来先服务算法实现
+void FCFS(vector<int> vec)                                           
 {
-	jcb(const string &a,int n)
-		:name(a),need_time(n),arrive_time(base_time++){}              //构造函数
-	string name;                                                      //作业名
-	int need_time;
-	int arrive_time;                                                  //每次调用到达时间+1
-};
-void FCFS(deque<jcb> vec)                                             //先来先服务调度算法
-{
-	double turn_time = 0;
-	double with_authority_turn_time = 0;
-	auto n = vec.size();
-	for (auto iter = vec.begin(); iter != vec.end(); ++iter)
+	double track_seeking_length = 0;                                 //寻道长度
+		track_seeking_length+=	abs(*vec.begin() - 100);
+	int n = vec.size();
+	cout << "FCFS寻道路径:     "<< "100->";
+	for (auto iter = vec.begin(); iter != vec.end()-1; ++iter)
 	{
-		cout<< "进程名" << iter->name << endl
-			<< "开始时间" << begin_time << endl
-			<< "完成时间" << begin_time + iter->need_time << endl
-			<< "周转时间" << begin_time + iter->need_time -
-			iter->arrive_time << endl
-			<< "带权周转时间" <<(double) (begin_time + iter->need_time -
-				iter->arrive_time) / iter->need_time << endl;
-		turn_time += begin_time + iter->need_time -
-			iter->arrive_time;                                                    //累加进程周转时间
-		with_authority_turn_time += (double)(begin_time + iter->need_time -
-			iter->arrive_time) / iter->need_time;                                 //累加进程带权周转时间
-		begin_time += iter->need_time;
-	 }
-	cout << "平均周转时间" << turn_time / n << endl
-		<< "平均带权周转时间" << with_authority_turn_time / n << endl;
-}                           
-void SJF(deque<jcb> vec)
-{
-	sort(vec.begin(), vec.end(),
-		[](jcb a, jcb b)
-	{return a.need_time < b.need_time; });    //按最短作业优先排序
-	FCFS(vec);                                //调用函数FCFS
-}
-int main()
-{
-	cout << "please cin process name,needtime" << endl;
-	string a;
-	int  n;
-	deque<jcb> vec;
-	while (cin >> a >> n)                                     //循环输入进程信息                
-	{
-		jcb process(a,  n);
-		vec.push_back(process);
+		track_seeking_length += abs(*(iter + 1) - *iter);            //abs绝对值函数
+		cout << *iter << "->";
 	}
-	//FCFS(vec);
-	SJF(vec);
+	cout << *(vec.end() - 1) << endl;
+	cout <<"FCFS平均寻道时间:     "<< track_seeking_length/n << endl;
+	
+}
+//最短寻道时间优先算法实现
+void SSTF(vector<int> vec)
+{
+	double track_seeking_length = 0;        //寻道时间
+	int key =100;
+	int n = vec.size();
+	cout << "SSTF寻道路径:     " << "100->";
+	map<int, int> ma;
+	for (auto c : vec)
+	{
+		ma.insert({ abs(c - key),c });
+	}
+	cout << ma.begin()->second << "->";
+	track_seeking_length = ma.begin()->first;
+	key = ma.begin()->second;
+	ma.erase(ma.begin()->first);
+	while (!ma.empty())
+	{
+		map<int, int> tmp;
+		for (auto iter = ma.begin(); iter != ma.end();++iter)
+		tmp.insert({ abs(iter->second - key),iter->second });
+		cout << tmp.begin()->second << "->";
+		key = tmp.begin()->second;
+		track_seeking_length += tmp.begin()->first;
+		for (auto b = ma.begin(); b!= ma.end(); ++b)
+		{
+			if (b->second == key)
+			{
+				ma.erase(b->first);
+				break;
+			}
+			
+		}
+	}
+	cout << endl;
+	cout << "SSTF平均寻道时间：  "<<track_seeking_length/n << endl;
+}
+//扫描算法实现
+void SCAN(vector<int> vec)
+{
+	int begin_track_num = 100;
+	double track_seeking_length = 0;
+	int n = vec.size();
+	int tmp = 0;
+	cout << "SCAN寻道路径： " << begin_track_num << "->";
+	vector<int> big_tmp,min_tmp;
+	for (auto c : vec)
+		if (c > begin_track_num)
+			big_tmp.push_back(c);
+		else
+			min_tmp.push_back(c);
+	sort(big_tmp.begin(), big_tmp.end());
+	sort(min_tmp.begin(), min_tmp.end(),
+		[](int a, int b) {return a > b; });
+	track_seeking_length = *big_tmp.begin() - begin_track_num;     //计算开始和第一个磁道之间的磁道数
+	track_seeking_length += *(big_tmp.end() - 1) - *min_tmp.begin(); //计算磁道折回来时移动的磁道数
+	for (auto c: big_tmp)
+	{
+		cout << c << "->";
+	}
+	for (auto c : min_tmp)
+	{
+		cout << c << "->";
+	}
+	for (auto iter = big_tmp.begin(); iter != big_tmp.end() - 1; ++iter) 
+	{
+		track_seeking_length += *(iter + 1) - *iter;
+	}
+	for (auto iter = min_tmp.begin(); iter != min_tmp.end() - 1; ++iter)
+	{
+		track_seeking_length += *iter - *(iter + 1);
+	}
+	cout << endl<<"SCAN平均寻道时间： "<< track_seeking_length / n << endl;
+
+}
+void CSCAN(vector<int> vec)
+{
+	int begin_track_num = 100;
+	double track_seeking_length = 0;
+	int n = vec.size();
+	int tmp = 0;
+	cout << "CSCAN寻道路径： " << begin_track_num << "->";
+	vector<int> big_tmp, min_tmp;
+	for (auto c : vec)
+		if (c > begin_track_num)
+			big_tmp.push_back(c);
+		else
+			min_tmp.push_back(c);
+	sort(big_tmp.begin(), big_tmp.end());
+	sort(min_tmp.begin(), min_tmp.end(),
+		[](int a, int b) {return a< b; });
+	track_seeking_length = *big_tmp.begin() - begin_track_num;     //计算开始和第一个磁道之间的磁道数
+	track_seeking_length += *(big_tmp.end() - 1) - *min_tmp.begin(); //计算磁道折回来时移动的磁道数
+	for (auto c : big_tmp)
+	{
+		cout << c << "->";
+	}
+	for (auto c : min_tmp)
+	{
+		cout << c << "->";
+	}
+	for (auto iter = big_tmp.begin(); iter != big_tmp.end() - 1; ++iter)
+	{
+		track_seeking_length += *(iter + 1) - *iter;
+	}
+	for (auto iter = min_tmp.begin(); iter != min_tmp.end() - 1; ++iter)
+	{
+		track_seeking_length += *(iter + 1) - *iter;
+	}
+	cout << endl << "CSCAN平均寻道时间： " << track_seeking_length / n << endl;
+
+}
+int  main()
+{
+	vector<int> vec;
+	int a;
+	while (cin >> a)
+		vec.push_back(a);
+	FCFS(vec);
+	SSTF(vec);
+	SCAN(vec);
+	CSCAN(vec);
 	return 0;
 }
