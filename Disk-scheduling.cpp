@@ -5,29 +5,29 @@
 #include<map>
 #include<algorithm>
 using namespace std;
-//ÏÈÀ´ÏÈ·şÎñËã·¨ÊµÏÖ
+//å…ˆæ¥å…ˆæœåŠ¡ç®—æ³•å®ç°
 void FCFS(vector<int> vec)                                           
 {
-	double track_seeking_length = 0;                                 //Ñ°µÀ³¤¶È
+	double track_seeking_length = 0;                                 //å¯»é“é•¿åº¦
 		track_seeking_length+=	abs(*vec.begin() - 100);
 	int n = vec.size();
-	cout << "FCFSÑ°µÀÂ·¾¶:     "<< "100->";
+	cout << "FCFSå¯»é“è·¯å¾„:     "<< "100->";
 	for (auto iter = vec.begin(); iter != vec.end()-1; ++iter)
 	{
-		track_seeking_length += abs(*(iter + 1) - *iter);            //abs¾ø¶ÔÖµº¯Êı
+		track_seeking_length += abs(*(iter + 1) - *iter);            //absç»å¯¹å€¼å‡½æ•°
 		cout << *iter << "->";
 	}
 	cout << *(vec.end() - 1) << endl;
-	cout <<"FCFSÆ½¾ùÑ°µÀÊ±¼ä:     "<< track_seeking_length/n << endl;
+	cout <<"FCFSå¹³å‡å¯»é“æ—¶é—´:     "<< track_seeking_length/n << endl;
 	
 }
-//×î¶ÌÑ°µÀÊ±¼äÓÅÏÈËã·¨ÊµÏÖ
+//æœ€çŸ­å¯»é“æ—¶é—´ä¼˜å…ˆç®—æ³•å®ç°
 void SSTF(vector<int> vec)
 {
-	double track_seeking_length = 0;        //Ñ°µÀÊ±¼ä
+	double track_seeking_length = 0;        //å¯»é“æ—¶é—´
 	int key =100;
 	int n = vec.size();
-	cout << "SSTFÑ°µÀÂ·¾¶:     " << "100->";
+	cout << "SSTFå¯»é“è·¯å¾„:     " << "100->";
 	map<int, int> ma;
 	for (auto c : vec)
 	{
@@ -56,16 +56,16 @@ void SSTF(vector<int> vec)
 		}
 	}
 	cout << endl;
-	cout << "SSTFÆ½¾ùÑ°µÀÊ±¼ä£º  "<<track_seeking_length/n << endl;
+	cout << "SSTFå¹³å‡å¯»é“æ—¶é—´ï¼š  "<<track_seeking_length/n << endl;
 }
-//É¨ÃèËã·¨ÊµÏÖ
+//æ‰«æç®—æ³•å®ç°
 void SCAN(vector<int> vec)
 {
 	int begin_track_num = 100;
 	double track_seeking_length = 0;
 	int n = vec.size();
 	int tmp = 0;
-	cout << "SCANÑ°µÀÂ·¾¶£º " << begin_track_num << "->";
+	cout << "SCANå¯»é“è·¯å¾„ï¼š " << begin_track_num << "->";
 	vector<int> big_tmp,min_tmp;
 	for (auto c : vec)
 		if (c > begin_track_num)
@@ -75,8 +75,8 @@ void SCAN(vector<int> vec)
 	sort(big_tmp.begin(), big_tmp.end());
 	sort(min_tmp.begin(), min_tmp.end(),
 		[](int a, int b) {return a > b; });
-	track_seeking_length = *big_tmp.begin() - begin_track_num;     //¼ÆËã¿ªÊ¼ºÍµÚÒ»¸ö´ÅµÀÖ®¼äµÄ´ÅµÀÊı
-	track_seeking_length += *(big_tmp.end() - 1) - *min_tmp.begin(); //¼ÆËã´ÅµÀÕÛ»ØÀ´Ê±ÒÆ¶¯µÄ´ÅµÀÊı
+	track_seeking_length = *big_tmp.begin() - begin_track_num;     //è®¡ç®—å¼€å§‹å’Œç¬¬ä¸€ä¸ªç£é“ä¹‹é—´çš„ç£é“æ•°
+	track_seeking_length += *(big_tmp.end() - 1) - *min_tmp.begin(); //è®¡ç®—ç£é“æŠ˜å›æ¥æ—¶ç§»åŠ¨çš„ç£é“æ•°
 	for (auto c: big_tmp)
 	{
 		cout << c << "->";
@@ -93,7 +93,7 @@ void SCAN(vector<int> vec)
 	{
 		track_seeking_length += *iter - *(iter + 1);
 	}
-	cout << endl<<"SCANÆ½¾ùÑ°µÀÊ±¼ä£º "<< track_seeking_length / n << endl;
+	cout << endl<<"SCANå¹³å‡å¯»é“æ—¶é—´ï¼š "<< track_seeking_length / n << endl;
 
 }
 void CSCAN(vector<int> vec)
@@ -102,7 +102,7 @@ void CSCAN(vector<int> vec)
 	double track_seeking_length = 0;
 	int n = vec.size();
 	int tmp = 0;
-	cout << "CSCANÑ°µÀÂ·¾¶£º " << begin_track_num << "->";
+	cout << "CSCANå¯»é“è·¯å¾„ï¼š " << begin_track_num << "->";
 	vector<int> big_tmp, min_tmp;
 	for (auto c : vec)
 		if (c > begin_track_num)
@@ -112,8 +112,8 @@ void CSCAN(vector<int> vec)
 	sort(big_tmp.begin(), big_tmp.end());
 	sort(min_tmp.begin(), min_tmp.end(),
 		[](int a, int b) {return a< b; });
-	track_seeking_length = *big_tmp.begin() - begin_track_num;     //¼ÆËã¿ªÊ¼ºÍµÚÒ»¸ö´ÅµÀÖ®¼äµÄ´ÅµÀÊı
-	track_seeking_length += *(big_tmp.end() - 1) - *min_tmp.begin(); //¼ÆËã´ÅµÀÕÛ»ØÀ´Ê±ÒÆ¶¯µÄ´ÅµÀÊı
+	track_seeking_length = *big_tmp.begin() - begin_track_num;     //è®¡ç®—å¼€å§‹å’Œç¬¬ä¸€ä¸ªç£é“ä¹‹é—´çš„ç£é“æ•°
+	track_seeking_length += *(big_tmp.end() - 1) - *min_tmp.begin(); //è®¡ç®—ç£é“æŠ˜å›æ¥æ—¶ç§»åŠ¨çš„ç£é“æ•°
 	for (auto c : big_tmp)
 	{
 		cout << c << "->";
@@ -130,7 +130,7 @@ void CSCAN(vector<int> vec)
 	{
 		track_seeking_length += *(iter + 1) - *iter;
 	}
-	cout << endl << "CSCANÆ½¾ùÑ°µÀÊ±¼ä£º " << track_seeking_length / n << endl;
+	cout << endl << "CSCANå¹³å‡å¯»é“æ—¶é—´ï¼š " << track_seeking_length / n << endl;
 
 }
 int  main()
